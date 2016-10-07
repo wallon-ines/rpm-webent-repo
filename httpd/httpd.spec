@@ -5,7 +5,7 @@
 Summary: Apache HTTP Server
 Name: httpd
 Version: 2.4.23
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://httpd.apache.org/
 Vendor: Apache Software Foundation
 Source0: http://www.apache.org/dist/httpd/httpd-%{version}.tar.bz2
@@ -214,10 +214,6 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/httpd/modules/*.exp \
 # Make suexec a+rw so it can be stripped.  %%files lists real permissions
 chmod 755 $RPM_BUILD_ROOT%{_sbindir}/suexec
 
-# Split-out extra config shipped as default in conf.d:
-#for f in docs/conf/extra/*; do
-#  install -m 644 httpd-${f} \
-#        $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/${f}
 #done
 cp docs/conf/extra/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.modules.d/
 rm -rf $RPM_BUILD_ROOT/etc/httpd/conf/{original,extra}
@@ -260,7 +256,7 @@ sed -i "s/Group daemon/Group apache/g" $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf/
 # Register the httpd service
 /sbin/chkconfig --add httpd
 /sbin/chkconfig --add htcacheclean
-
+rm -rf %{_sysconfdir}/httpd/conf/{original,extra}
 %preun
 if [ $1 = 0 ]; then
 	/sbin/service httpd stop > /dev/null 2>&1
@@ -295,7 +291,7 @@ fi
 # Enable SSL Modules
 sed -i "s/#LoadModule socache_shmcb/LoadModule socache_shmcb/g" %{_sysconfdir}/httpd/conf/httpd.conf
 sed -i "s/#LoadModule ssl_module/LoadModule ssl_module/g" %{_sysconfdir}/httpd/conf/httpd.conf
-sed -i "s:#Include %{_sysconfdir}/httpd/conf/extra/httpd-ssl.conf:Include %{_sysconfdir}/httpd/conf.modules.d/httpd-ssl.conf:g" %{_sysconfdir}/httpd/conf/httpd.conf
+sed -i "s:#Include conf.modules.d/httpd-ssl.conf:Include conf.modules.d/httpd-ssl.conf:g" %{_sysconfdir}/httpd/conf/httpd.conf
 
 
 
