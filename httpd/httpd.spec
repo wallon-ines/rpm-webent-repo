@@ -332,17 +332,6 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-multilang-errordoc.conf
 %config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-userdir.conf
 %config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-vhosts.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-autoindex.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-dav.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-default.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-info.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-languages.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-manual.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-mpm.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-multilang-errordoc.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-userdir.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-vhosts.conf
-# %config(noreplace) %{_sysconfdir}/httpd/conf/original/httpd.conf
 
 %config %{_sysconfdir}/logrotate.d/httpd
 %config %{_sysconfdir}/rc.d/init.d/httpd
