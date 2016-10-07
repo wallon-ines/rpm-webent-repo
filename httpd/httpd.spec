@@ -214,9 +214,7 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/httpd/modules/*.exp \
 # Make suexec a+rw so it can be stripped.  %%files lists real permissions
 chmod 755 $RPM_BUILD_ROOT%{_sbindir}/suexec
 
-#done
-cp docs/conf/extra/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.modules.d/
-rm -rf $RPM_BUILD_ROOT/etc/httpd/conf/{original,extra}
+rm -rf $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf/{original}
 
 sed -i "s:conf/extra/:conf.modules.d/:g" $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf/httpd.conf
 sed -i "s:/usr/lib64/httpd/modules/:modules/:g" $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf/httpd.conf
@@ -256,6 +254,8 @@ sed -i "s/Group daemon/Group apache/g" $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf/
 # Register the httpd service
 /sbin/chkconfig --add httpd
 /sbin/chkconfig --add htcacheclean
+
+cp %{_sysconfdir}/httpd/conf/extra/*.conf %{_sysconfdir}/httpd/conf.modules.d/
 rm -rf %{_sysconfdir}/httpd/conf/{original,extra}
 %preun
 if [ $1 = 0 ]; then
@@ -264,7 +264,10 @@ if [ $1 = 0 ]; then
 	/sbin/chkconfig --del httpd
         /sbin/chkconfig --del htcacheclean
 fi
+%post -n mod_proxy_html
 
+cp %{_sysconfdir}/httpd/conf/extra/*.conf %{_sysconfdir}/httpd/conf.modules.d/
+rm -rf %{_sysconfdir}/httpd/conf/{original,extra}
 %post -n mod_ssl
 umask 077
 
@@ -288,6 +291,8 @@ ${FQDN}
 root@${FQDN}
 EOF
 fi
+cp %{_sysconfdir}/httpd/conf/extra/*.conf %{_sysconfdir}/httpd/conf.modules.d/
+rm -rf %{_sysconfdir}/httpd/conf/{original,extra}
 # Enable SSL Modules
 sed -i "s/#LoadModule socache_shmcb/LoadModule socache_shmcb/g" %{_sysconfdir}/httpd/conf/httpd.conf
 sed -i "s/#LoadModule ssl_module/LoadModule ssl_module/g" %{_sysconfdir}/httpd/conf/httpd.conf
@@ -319,16 +324,28 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/httpd/conf/httpd.conf
 %config(noreplace) %{_sysconfdir}/httpd/conf/magic
 %config(noreplace) %{_sysconfdir}/httpd/conf/mime.types
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-autoindex.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-dav.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-default.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-info.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-languages.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-manual.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-mpm.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-multilang-errordoc.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-userdir.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-vhosts.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-autoindex.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-dav.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-default.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-info.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-languages.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-manual.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-mpm.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-multilang-errordoc.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-userdir.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-vhosts.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-autoindex.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-dav.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-default.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-info.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-languages.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-manual.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-mpm.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-multilang-errordoc.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-userdir.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-vhosts.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/httpd.conf
+
 %config %{_sysconfdir}/logrotate.d/httpd
 %config %{_sysconfdir}/rc.d/init.d/httpd
 %config %{_sysconfdir}/rc.d/init.d/htcacheclean
@@ -506,7 +523,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n mod_proxy_html
 %defattr(-,root,root)
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/proxy-html.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/proxy-html.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/proxy-html.conf
 %{_libdir}/httpd/modules/mod_proxy_html.so
 %{_libdir}/httpd/modules/mod_xml2enc.so
 
@@ -517,7 +535,8 @@ rm -rf $RPM_BUILD_ROOT
 %files -n mod_ssl
 %defattr(-,root,root)
 %{_libdir}/httpd/modules/mod_ssl.so
-%config(noreplace) %{_sysconfdir}/httpd/conf.modules.d/httpd-ssl.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/extra/httpd-ssl.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/original/extra/httpd-ssl.conf
 %attr(0700,apache,root) %dir %{_localstatedir}/cache/mod_ssl
 %attr(0600,apache,root) %ghost %{_localstatedir}/cache/mod_ssl/scache.dir
 %attr(0600,apache,root) %ghost %{_localstatedir}/cache/mod_ssl/scache.pag
